@@ -3,6 +3,7 @@ defmodule Issues.GithubIssues do
   Module that integrate with Github's API
   """
   @user_agent [{"User-Agent", "Elixir luizgustavo.caciatori@gmail.com"}]
+  @github_url Application.get_env(:issues, :github_url)
 
   def fetch(user, project) do
     issues_url(user, project)
@@ -20,32 +21,16 @@ defmodule Issues.GithubIssues do
 
   """
   def issues_url(user, project) do
-    "https://api.github.com/repos/#{user}/#{project}/issues"
+    "#{@github_url}/repos/#{user}/#{project}/issues"
   end
 
-  @doc """
-  Handle success response
-
-  ## Examples
-
-      iex> GithubIssues.handle_response({:ok, %{status_code: 200, body: {}}})
-      {:ok, {}}
-
-  """
-  def handle_response({:ok, %{status_code: 200, body: body}}) do
-    {:ok, body}
+  def handle_response({_, %{status_code: status_code, body: body}}) do
+    {
+      status_code |> check_error(),
+      body |> Poison.Parser.parse!()
+    }
   end
 
-  @doc """
-  Handle error response
-
-  ## Examples
-
-      iex> GithubIssues.handle_response({:error, %{status_code: 401, body: {}}})
-      {:error, {}}
-
-  """
-  def handle_response({_, %{status_code: _, body: body}}) do
-    {:error, body}
-  end
+  defp check_error(200), do: :ok
+  defp check_error(_), do: :error
 end
