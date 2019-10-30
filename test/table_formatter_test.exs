@@ -24,6 +24,11 @@ defmodule TableFormatterTest do
     assert List.last(columns) == ["r1+++c4", "r2 c4", "r3 c4", "r4 c4"]
   end
 
+  test "empty_widths" do
+    widths = TF.widths_of(TF.split_into_columns([], @headers))
+    assert widths == [5, 6, 7]
+  end
+
   test "correct_widths" do
     widths = TF.widths_of(split_with_three_columns())
     assert widths == [5, 6, 7]
@@ -40,6 +45,6 @@ defmodule TableFormatterTest do
       end)
 
     assert result ==
-             "c1    | c2     | c4     \n------+--------+--------\nr1 c1 | r1 c2  | r1+++c4\nr2 c1 | r2 c2  | r2 c4  \nr3 c1 | r3 c2  | r3 c4  \nr4 c1 | r4++c2 | r4 c4  \n"
+             "r1 c1r2 c1r3 c1r4 c1r1 c2r2 c2r3 c2r4++c2r1+++c4r2 c4r3 c4r4 c4\nc1    | c2     | c4     \n------+--------+--------\nr1 c1 | r1 c2  | r1+++c4\nr2 c1 | r2 c2  | r2 c4  \nr3 c1 | r3 c2  | r3 c4  \nr4 c1 | r4++c2 | r4 c4  \n"
   end
 end

@@ -11,6 +11,8 @@ defmodule Issues.TableFormatter do
     end
   end
 
+  def split_into_colums([], _header), do: []
+
   def split_into_columns(rows, headers) do
     for header <- headers do
       for row <- rows do
@@ -23,7 +25,10 @@ defmodule Issues.TableFormatter do
 
   def printable(str), do: to_string(str)
 
+  def width_of([]), do: 0
+
   def widths_of(columns) do
+    IO.puts(columns)
     for column <- columns, do: column |> map(&String.length/1) |> max
   end
 
